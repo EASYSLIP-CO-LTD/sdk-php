@@ -26,3 +26,4 @@ tests/fixtures/** -text
 /phpstan.neon.dist export-ignore
 /phpunit.xml.dist export-ignore
 /release-please-config.json export-ignore
+/RELEASING.md export-ignore
