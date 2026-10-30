@@ -9,7 +9,7 @@
 ## Checklist
 
 - [ ] The title is a Conventional Commit, for example `fix: keep the request id on network errors`.
-- [ ] `composer check` and `composer check:package` pass.
+- [ ] `composer validate --strict` and `composer check` pass.
 - [ ] Tests cover the change.
 - [ ] `README.md` and `README.th.md` are updated if the public API or its behaviour changed.
 - [ ] No API keys, webhook secrets, real slip images or customer data are included.

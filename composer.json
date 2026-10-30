@@ -64,28 +64,23 @@
             "@lint",
             "@format:check",
             "@analyse",
-            "@check:readme",
             "@test"
         ],
-        "check:package": "@php scripts/check-package.php",
-        "check:readme": "@php scripts/check-readme.php",
         "format": "php-cs-fixer fix",
         "format:check": "php-cs-fixer check --diff",
-        "lint": "@php scripts/lint.php",
-        "test": "phpunit --testsuite unit,conformance",
-        "test:coverage": "phpunit --testsuite unit,conformance --coverage-text --coverage-clover build/coverage/clover.xml",
+        "lint": "find src tests examples .php-cs-fixer.dist.php -name '*.php' -print0 | xargs -0 -n1 php -d display_errors=stderr -l > /dev/null",
+        "test": "phpunit --testsuite unit,conformance,readme",
+        "test:coverage": "phpunit --testsuite unit,conformance,readme --coverage-text",
         "test:integration": "phpunit --testsuite integration"
     },
     "scripts-descriptions": {
         "analyse": "Run PHPStan at the max level over src and examples.",
-        "check": "Run every check that CI runs, except the package and integration checks.",
-        "check:package": "Build the package archive, install it in a fresh project and make an offline call.",
-        "check:readme": "Check that every PHP code block in the READMEs is valid and passes PHPStan.",
+        "check": "Run the syntax, format, static analysis and test checks that CI runs.",
         "format": "Format the code.",
         "format:check": "Check the formatting without changing files.",
         "lint": "Check the syntax of every PHP file.",
-        "test": "Run the unit and conformance tests.",
-        "test:coverage": "Run the unit and conformance tests with a coverage report.",
+        "test": "Run the unit, conformance and README tests.",
+        "test:coverage": "Run the unit, conformance and README tests with a coverage report.",
         "test:integration": "Run the integration tests against the live API (needs EASYSLIP_API_KEY)."
     }
 }
