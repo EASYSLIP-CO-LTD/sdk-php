@@ -86,6 +86,7 @@ jobs:
         run: composer test:coverage
       - name: Coverage summary
         run: |
+          # shellcheck disable=SC2016 # the single quotes keep the PHP variables away from the shell
           php -r '$m = simplexml_load_file("build/coverage/clover.xml")->project->metrics;
           $row = fn (string $name, string $all, string $covered): string => sprintf("| %s | %.2f%% |", $name, 100 * (int) $m[$covered] / max(1, (int) $m[$all]));
           echo implode("\n", ["| Metric | Covered |", "| --- | --- |", $row("lines", "statements", "coveredstatements"), $row("methods", "methods", "coveredmethods")]), "\n";' >> "$GITHUB_STEP_SUMMARY"
