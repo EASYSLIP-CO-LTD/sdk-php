@@ -80,6 +80,8 @@ jobs:
           fi
       - name: Syntax check
         run: composer lint
+      - name: Static analysis with the installed dependency versions
+        run: composer analyse
       - name: Unit and conformance tests with coverage
         run: composer test:coverage
       - name: Coverage summary

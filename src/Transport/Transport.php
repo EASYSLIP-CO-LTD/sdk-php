@@ -86,9 +86,7 @@ final class Transport
                     throw $error;
                 }
                 $this->remaining($deadline);
-                $timedOut = $error instanceof \GuzzleHttp\Exception\ConnectTimeoutException
-                    || $error instanceof \GuzzleHttp\Exception\NetworkTimeoutException
-                    || $error instanceof \GuzzleHttp\Exception\ResponseTimeoutException
+                $timedOut = self::isGuzzleTimeout($error)
                     || ($readingBody && (
                         $error instanceof RequestTimeoutError
                     || hrtime(true) / 1e9 - $started >= $limit
@@ -136,7 +134,27 @@ final class Transport
         }
     }
 
-    private static function connectionErrno(#[\SensitiveParameter] ConnectException $error): ?int
+    private static function isGuzzleTimeout(#[\SensitiveParameter] \Throwable $error): bool
+    {
+        // These exception types were introduced in Guzzle 8.
+        foreach ([
+            'GuzzleHttp\\Exception\\ConnectTimeoutException',
+            'GuzzleHttp\\Exception\\NetworkTimeoutException',
+            'GuzzleHttp\\Exception\\ResponseTimeoutException',
+        ] as $class) {
+            if (self::matchesAvailableException($error, $class)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static function matchesAvailableException(#[\SensitiveParameter] \Throwable $error, string $class): bool
+    {
+        return class_exists($class) && is_a($error, $class);
+    }
+
+    private static function connectionErrno(#[\SensitiveParameter] \Throwable $error): ?int
     {
         // Version 7 exposes handler context; version 8 uses typed exceptions.
         if (method_exists($error, 'getHandlerContext')) {
