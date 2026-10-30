@@ -24,4 +24,8 @@
             <directory>src</directory>
         </include>
     </source>
+    <php>
+        <!-- With coverage on, the redaction tests that dump whole exceptions need more than PHP's default 128M. -->
+        <ini name="memory_limit" value="512M"/>
+    </php>
 </phpunit>
