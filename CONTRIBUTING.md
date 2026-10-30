@@ -65,10 +65,12 @@ Maintainers release the SDK with [release-please](https://github.com/googleapis/
 2. Merging the release pull request creates the version tag and a draft GitHub Release. The same workflow run then checks that the tag points at the release commit on `main` and matches the release manifest and the User-Agent version, runs every check, and builds the archive.
 3. The `publish` job runs in the `release` environment. It waits until Packagist lists the new version for the tagged commit, attaches the archive and its build attestation to the draft release and publishes the release. The `smoke` job then installs that version from Packagist on every supported PHP version.
 
-To check a tag again, for example after a failed publish job, run the `Release` workflow on `main` from the Actions tab and enter the tag, such as `v1.0.0`. The run checks the tag the same way and leaves a published release as it is.
+If a publish job fails, for example because Packagist was not connected yet, fix the cause and re-run the failed jobs of that run. When that run can no longer be re-run, run the `Release` workflow on `main` from the Actions tab and enter the tag, such as `v1.0.0`. The run checks the tag the same way and leaves a published release as it is.
 
 ### One-time setup
 
 - Submit `https://github.com/EASYSLIP-CO-LTD/sdk-php` on packagist.org as the `easyslip/sdk` package, and connect Packagist to GitHub so that it updates the package when a tag is pushed. No Packagist token is stored in this repository.
 - In the repository settings, create the `release` environment. Limit its deployment branches to `main`, and add required reviewers if a person should approve each publish. While a publish waits for approval, later runs of the `Release` workflow on `main` wait for it.
+- In the repository settings, under Actions, General, Workflow permissions, turn on "Allow GitHub Actions to create and approve pull requests". release-please opens the release pull request with the workflow's `GITHUB_TOKEN`, and GitHub refuses that without this setting.
+- In the repository's security settings, turn on private vulnerability reporting, which [SECURITY.md](SECURITY.md) asks reporters to use.
 - Optional: create an `integration` environment with an `EASYSLIP_API_KEY` secret, so that CI runs the integration tests on `main`.
