@@ -485,7 +485,7 @@ Every exception the SDK throws is an `EasySlipError`, which extends `RuntimeExce
 | `SlipPendingError` | 404 | The bank has not published the transfer yet. This happens with very recent Bangkok Bank slips. | Verify the slip again after a minute. |
 | `ConflictError` | 409 | The bank account you are adding already exists. | Use the existing account. `bankAccounts->iterateAll()` finds it. |
 | `RateLimitError` | 429 | You sent too many requests. `$error->retryAfter` says how many seconds to wait. | Send fewer requests at the same time. The SDK has already retried this one. |
-| `ServerError` | 500, 502, 504 | Something failed on the EasySlip side. | Try again later. If it keeps happening, contact support with `$error->requestId`. |
+| `ServerError` | 500, 502, 504; other 5xx except 503 | Something failed on the EasySlip side. | Try again later. If it keeps happening, contact support with `$error->requestId`. |
 | `ServiceUnavailableError` | 503 | The service is briefly unavailable, for example while quotas renew. | Try again in a few minutes. |
 | `ApiError` | Another 4xx status | The API answered with an error status that has no class of its own. | Log `status`, `code` and `requestId`, and contact support if it continues. |
 | `NetworkError` | Network | No response arrived, because of a DNS, connection or TLS failure. | Check your network or proxy, then try again. |

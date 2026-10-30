@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace EasySlip\Tests\Unit;
 
+use EasySlip\Exception\ApiError;
 use EasySlip\Exception\EasySlipError;
 use EasySlip\Exception\ErrorCodes;
+use EasySlip\Exception\ServerError;
+use EasySlip\Exception\ServiceUnavailableError;
+use EasySlip\Transport\ResponseDecoder;
+use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 /** The error tables match the API error catalogue in tests/fixtures/errors.json. */
@@ -38,6 +43,18 @@ final class ErrorCodesTest extends TestCase
             $want[(int) $status] = 'EasySlip\\Exception\\' . $class;
         }
         self::assertSame($want, ErrorCodes::STATUS);
+    }
+
+    public function testOtherServerStatusesWithoutAKnownCodeAreServerErrors(): void
+    {
+        foreach ([500, 501, 502, 504, 507, 599] as $status) {
+            $error = ResponseDecoder::error(new Response($status, [], '{"success":false,"error":{"code":"UNLISTED","message":"m"}}'), 'unit-secret');
+            self::assertSame(ServerError::class, $error::class, (string) $status);
+        }
+        $unavailable = ResponseDecoder::error(new Response(503, [], '{}'), 'unit-secret');
+        self::assertSame(ServiceUnavailableError::class, $unavailable::class);
+        $teapot = ResponseDecoder::error(new Response(418, [], '{}'), 'unit-secret');
+        self::assertSame(ApiError::class, $teapot::class);
     }
 
     public function testErrorClassesHaveTheCatalogueParents(): void
