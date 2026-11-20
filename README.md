@@ -411,7 +411,7 @@ A v2 verification returns your check results at the top level and the slip as th
 | `rawSlip->receiver?->phone` | `?string` | The receiver's phone number, partly hidden. | `'08-xxx-9876'` |
 | `rawSlip->sender?->name`, `rawSlip->receiver?->name` | `?string` | The name. Deprecated: new results do not have it, only older ones do. | `'นาย รับเงิน ทดสอบ'` |
 
-A result has no names. `rawSlip->sender` and `rawSlip->receiver` are `null` when no phone came back for that side, so read them with `?->`. `has('sender')` tells a missing field from a `null` one.
+New results have no names. `rawSlip->sender` and `rawSlip->receiver` are `null` when no phone came back for that side, so read them with `?->`. `has('sender')` tells a missing field from a `null` one.
 
 Every result also has a `meta` property with the HTTP `status`, the `requestId`, the `rateLimit` counters and the response `headers`. It is not part of the data, so `json_encode($result)` returns the data as the API sent it, without `meta`.
 
