@@ -10,8 +10,8 @@ final readonly class TrueWalletSlip extends Model
     public string $transactionId;
     public string $date;
     public float $amount;
-    public TrueWalletSender $sender;
-    public TrueWalletReceiver $receiver;
+    public ?TrueWalletSender $sender;
+    public ?TrueWalletReceiver $receiver;
 
     /** @param array<string, mixed> $data */
     public function __construct(array $data, ?ResponseMeta $meta = null)
@@ -20,7 +20,7 @@ final readonly class TrueWalletSlip extends Model
         $this->transactionId = $this->string($data, 'transactionId');
         $this->date = $this->string($data, 'date');
         $this->amount = $this->float($data, 'amount');
-        $this->sender = new TrueWalletSender($this->object($data, 'sender'));
-        $this->receiver = new TrueWalletReceiver($this->object($data, 'receiver'));
+        $this->sender = !isset($data['sender']) ? null : new TrueWalletSender($this->object($data, 'sender'));
+        $this->receiver = !isset($data['receiver']) ? null : new TrueWalletReceiver($this->object($data, 'receiver'));
     }
 }

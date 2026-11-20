@@ -19,7 +19,7 @@ final class BilledOperationTest extends TestCase
 {
     public static function operations(): iterable
     {
-        foreach (['verify' => ['bankByPayload', 'bankByImage', 'bankByBase64', 'bankByUrl', 'truewalletByImage', 'truewalletByBase64', 'truewalletByUrl'], 'v1' => ['verifyBankByPayload', 'verifyBankByImage', 'verifyBankByBase64', 'verifyBankByUrl', 'verifyTruemoneyByImage'], 'jobs' => ['submitBank', 'submitBankBatch', 'submitBankMany']] as $resource => $methods) {
+        foreach (['verify' => ['bankByPayload', 'bankByImage', 'bankByBase64', 'bankByUrl', 'truewalletByPayload', 'truewalletByImage', 'truewalletByBase64', 'truewalletByUrl'], 'v1' => ['verifyBankByPayload', 'verifyBankByImage', 'verifyBankByBase64', 'verifyBankByUrl', 'verifyTruemoneyByPayload', 'verifyTruemoneyByImage'], 'jobs' => ['submitBank', 'submitBankBatch', 'submitBankMany']] as $resource => $methods) {
             foreach ($methods as $method) {
                 foreach (['timeout', '500'] as $failure) {
                     yield "$resource.$method.$failure" => [$resource, $method, $failure];

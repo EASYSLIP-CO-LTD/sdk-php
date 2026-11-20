@@ -187,10 +187,10 @@ $result = $easyslip->verify->truewalletByImage(FileInput::fromPath('wallet-recei
     matchAmount: 500,
     checkDuplicate: true,
 ));
-echo $result->rawSlip->transactionId, ' ', $result->rawSlip->amount, ' ', $result->rawSlip->receiver->name, "\n";
+echo $result->rawSlip->transactionId, ' ', $result->rawSlip->amount, ' ', $result->rawSlip->receiver?->phone, "\n";
 ```
 
-`verify->truewalletByUrl()` takes an image URL and `verify->truewalletByBase64()` takes base64.
+`verify->truewalletByUrl()` takes an image URL, `verify->truewalletByBase64()` takes base64, and `verify->truewalletByPayload()` takes the text of the transfer QR code. In v1 use `verifyTruemoneyByPayload()`.
 
 ### Account info and remaining quota
 
@@ -361,7 +361,7 @@ try {
 }
 ```
 
-API v1 also has `verifyBankByPayload()`, `verifyBankByUrl()`, `verifyBankByBase64()`, `verifyTruemoneyByImage()` and `getMe()`.
+API v1 also has `verifyBankByPayload()`, `verifyBankByUrl()`, `verifyBankByBase64()`, `verifyTruemoneyByImage()`, `verifyTruemoneyByPayload()` and `getMe()`.
 
 ### Many slips at once
 
@@ -407,9 +407,11 @@ A v2 verification returns your check results at the top level and the slip as th
 | `rawSlip->transactionId` | `string` | The TrueMoney transaction ID. | `'50012345678901'` |
 | `rawSlip->date` | `string` | When the payment happened, in ISO 8601. | `'2026-10-26T14:30:00+07:00'` |
 | `rawSlip->amount` | `float` | The amount, in baht. | `500.0` |
-| `rawSlip->sender->name` | `string` | The payer's name. | `'นาย ผู้โอน ทดสอบ'` |
-| `rawSlip->receiver->name` | `string` | The receiver's name. | `'นาย รับเงิน ทดสอบ'` |
-| `rawSlip->receiver->phone` | `string` | The receiver's phone number, partly hidden. | `'08x-xxx-4567'` |
+| `rawSlip->sender?->phone` | `?string` | The payer's phone number, partly hidden. | `'08-xxx-2345'` |
+| `rawSlip->receiver?->phone` | `?string` | The receiver's phone number, partly hidden. | `'08-xxx-9876'` |
+| `rawSlip->sender?->name`, `rawSlip->receiver?->name` | `?string` | The name. Deprecated: new results do not have it, only older ones do. | `'นาย รับเงิน ทดสอบ'` |
+
+New results have no names. `rawSlip->sender` and `rawSlip->receiver` are `null` when no phone came back for that side, so read them with `?->`. `has('sender')` tells a missing field from a `null` one.
 
 Every result also has a `meta` property with the HTTP `status`, the `requestId`, the `rateLimit` counters and the response `headers`. It is not part of the data, so `json_encode($result)` returns the data as the API sent it, without `meta`.
 
