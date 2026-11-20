@@ -191,10 +191,10 @@ $result = $easyslip->verify->truewalletByImage(FileInput::fromPath('wallet-recei
     matchAmount: 500,
     checkDuplicate: true,
 ));
-echo $result->rawSlip->transactionId, ' ', $result->rawSlip->amount, ' ', $result->rawSlip->receiver->name, "\n";
+echo $result->rawSlip->transactionId, ' ', $result->rawSlip->amount, ' ', $result->rawSlip->receiver?->phone, "\n";
 ```
 
-ใช้ `verify->truewalletByUrl()` เมื่อมี URL ของรูป และ `verify->truewalletByBase64()` เมื่อมี base64
+ใช้ `verify->truewalletByUrl()` เมื่อมี URL ของรูป `verify->truewalletByBase64()` เมื่อมี base64 และ `verify->truewalletByPayload()` เมื่อมีข้อความใน QR ของรายการโอน ใน v1 ใช้ `verifyTruemoneyByPayload()`
 
 ### ข้อมูลบัญชีและโควต้าคงเหลือ
 
@@ -369,7 +369,7 @@ try {
 }
 ```
 
-API v1 ยังมี `verifyBankByPayload()`, `verifyBankByUrl()`, `verifyBankByBase64()`, `verifyTruemoneyByImage()` และ `getMe()`
+API v1 ยังมี `verifyBankByPayload()`, `verifyBankByUrl()`, `verifyBankByBase64()`, `verifyTruemoneyByImage()`, `verifyTruemoneyByPayload()` และ `getMe()`
 
 ### ตรวจหลายใบพร้อมกัน
 
@@ -419,9 +419,11 @@ API v1 ยังมี `verifyBankByPayload()`, `verifyBankByUrl()`, `verifyBank
 | `rawSlip->transactionId` | `string` | เลขรายการของ TrueMoney | `'50012345678901'` |
 | `rawSlip->date` | `string` | เวลาที่ชำระ รูปแบบ ISO 8601 | `'2026-10-26T14:30:00+07:00'` |
 | `rawSlip->amount` | `float` | ยอดเงิน หน่วยเป็นบาท | `500.0` |
-| `rawSlip->sender->name` | `string` | ชื่อผู้โอน | `'นาย ผู้โอน ทดสอบ'` |
-| `rawSlip->receiver->name` | `string` | ชื่อผู้รับ | `'นาย รับเงิน ทดสอบ'` |
-| `rawSlip->receiver->phone` | `string` | เบอร์โทรผู้รับ ปิดบางหลักไว้ | `'08x-xxx-4567'` |
+| `rawSlip->sender?->phone` | `?string` | เบอร์โทรผู้โอน ปิดบางหลักไว้ | `'08-xxx-2345'` |
+| `rawSlip->receiver?->phone` | `?string` | เบอร์โทรผู้รับ ปิดบางหลักไว้ | `'08-xxx-9876'` |
+| `rawSlip->sender?->name`, `rawSlip->receiver?->name` | `?string` | ชื่อ เลิกใช้แล้ว ผลใหม่ไม่มี มีเฉพาะผลรุ่นเก่า | `'นาย รับเงิน ทดสอบ'` |
+
+ผลลัพธ์ไม่มีชื่อ ถ้าไม่ได้เบอร์ฝั่งไหนมา `rawSlip->sender` หรือ `rawSlip->receiver` ฝั่งนั้นจะเป็น `null` จึงควรอ่านด้วย `?->` ส่วน `has('sender')` แยก field ที่ไม่ส่งมากับ field ที่เป็น null ได้
 
 ผลการตรวจทุกตัวมี property `meta` ที่เก็บ HTTP `status`, `requestId`, ตัวนับ `rateLimit` และ `headers` ของ response ค่านี้ไม่ได้เป็นส่วนของข้อมูล `json_encode($result)` จึงคืนข้อมูลตามที่ API ส่งมาโดยไม่รวม `meta`
 

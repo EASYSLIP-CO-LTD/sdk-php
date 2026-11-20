@@ -43,6 +43,14 @@ final readonly class Verify
         $body = ['url' => $url] + $body;
         return $this->api->call(BankSlipResult::class, 'POST', '/verify/bank', $body);
     }
+    /** Verify a wallet transfer from the text of its QR code; may spend quota. */
+    public function truewalletByPayload(string $payload, ?VerifyOptions $options = null): TrueWalletResult
+    {
+        Validation::text($payload, 'payload', 256);
+        $body = $options?->jsonSerialize() ?? [];
+        $body = ['payload' => $payload] + $body;
+        return $this->api->call(TrueWalletResult::class, 'POST', '/verify/truewallet', $body);
+    }
     /** Verify a wallet slip; may spend quota. */
     public function truewalletByImage(FileInput $file, ?VerifyOptions $options = null): TrueWalletResult
     {
